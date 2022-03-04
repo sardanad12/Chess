@@ -1,0 +1,1135 @@
+//Name:Dhruv Sardana
+//Date:11th June,2019
+//Purpose:CHESS
+
+import java.awt.*;
+import java.awt.event.*;
+import javax.swing.*;
+import java.applet.Applet;
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
+public class hello extends Applet implements ActionListener
+{
+
+int last = -1;// turns
+int kpx;// tracks kings position for king x checks position
+int kpy;// tracks kings position for king y checks position
+int vacant;// for check mate checks for vacant spots
+int kingcheck;// for checking if the king is in check
+
+Panel p_card;  //to hold all of the screens
+Panel card1, card2, card3, card4, card5, card6, card7, card8, card9, card10, card11, card12, card13; //the screens
+CardLayout cdLayout = new CardLayout ();
+JLabel turnpic;// pic to display the turn
+JLabel turnwritten;// pic to display the turn but in the name
+char turn ='W';// turn
+//grid
+int row = 8;// the rows of the grid
+int col = 8;// the coloumn of the grid
+JButton a[] = new JButton [row * col];
+
+
+// array for piece color either white or black
+char pieceCol[][]={{'B', 'B', 'B', 'B', 'B', 'B', 'B', 'B'},
+{'B', 'B', 'B', 'B', 'B', 'B', 'B', 'B'},
+{'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X'},
+{'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X'},
+{'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X'},
+{'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X'},
+{'W', 'W', 'W', 'W', 'W', 'W', 'W', 'W'},
+{'W', 'W', 'W', 'W', 'W', 'W', 'W', 'W'}};
+
+
+// array for background color of the pieces
+char bg[][]={{'B', 'W', 'B', 'W', 'B', 'W', 'B', 'W'},
+{'W', 'B', 'W', 'B', 'W', 'B', 'W', 'B'},
+{'B', 'W', 'B', 'W', 'B', 'W', 'B', 'W'},
+{'W', 'B', 'W', 'B', 'W', 'B', 'W', 'B'},
+{'B', 'W', 'B', 'W', 'B', 'W', 'B', 'W'},
+{'W', 'B', 'W', 'B', 'W', 'B', 'W', 'B'},
+{'B', 'W', 'B', 'W', 'B', 'W', 'B', 'W'},
+{'W', 'B', 'W', 'B', 'W', 'B', 'W', 'B'}};
+// array for the pieces
+char piece[][]={{'R', 'N', 'B', 'K', 'Q', 'B', 'N', 'R'},
+{'P', 'P', 'P', 'P', 'P', 'P', 'P', 'P'},
+{'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X'},
+{'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X'},
+{'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X'},
+{'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X'},
+{'P', 'P', 'P', 'P', 'P', 'P', 'P', 'P'},
+{'R', 'N', 'B', 'K', 'Q', 'B', 'N', 'R'}};
+//array for whether the piece is selected or not or where it can go
+char sel[][]={{'U', 'U', 'U', 'U', 'U', 'U', 'U', 'U'},
+{'U', 'U', 'U', 'U', 'U', 'U', 'U', 'U'},
+{'U', 'U', 'U', 'U', 'U', 'U', 'U', 'U'},
+{'U', 'U', 'U', 'U', 'U', 'U', 'U', 'U'},
+{'U', 'U', 'U', 'U', 'U', 'U', 'U', 'U'},
+{'U', 'U', 'U', 'U', 'U', 'U', 'U', 'U'},
+{'U', 'U', 'U', 'U', 'U', 'U', 'U', 'U'},
+{'U', 'U', 'U', 'U', 'U', 'U', 'U', 'U'}};
+// tracks the sel array for checks
+char check[][]={{'U', 'U', 'U', 'U', 'U', 'U', 'U', 'U'},
+{'U', 'U', 'U', 'U', 'U', 'U', 'U', 'U'},
+{'U', 'U', 'U', 'U', 'U', 'U', 'U', 'U'},
+{'U', 'U', 'U', 'U', 'U', 'U', 'U', 'U'},
+{'U', 'U', 'U', 'U', 'U', 'U', 'U', 'U'},
+{'U', 'U', 'U', 'U', 'U', 'U', 'U', 'U'},
+{'U', 'U', 'U', 'U', 'U', 'U', 'U', 'U'},
+{'U', 'U', 'U', 'U', 'U', 'U', 'U', 'U'}};
+// RESET ARRAYS
+
+char pieceCol1[][]={{'B', 'B', 'B', 'B', 'B', 'B', 'B', 'B'},
+{'B', 'B', 'B', 'B', 'B', 'B', 'B', 'B'},
+{'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X'},
+{'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X'},
+{'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X'},
+{'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X'},
+{'W', 'W', 'W', 'W', 'W', 'W', 'W', 'W'},
+{'W', 'W', 'W', 'W', 'W', 'W', 'W', 'W'}};
+
+
+// RESET ARRAYS
+char bg1[][]={{'B', 'W', 'B', 'W', 'B', 'W', 'B', 'W'},
+{'W', 'B', 'W', 'B', 'W', 'B', 'W', 'B'},
+{'B', 'W', 'B', 'W', 'B', 'W', 'B', 'W'},
+{'W', 'B', 'W', 'B', 'W', 'B', 'W', 'B'},
+{'B', 'W', 'B', 'W', 'B', 'W', 'B', 'W'},
+{'W', 'B', 'W', 'B', 'W', 'B', 'W', 'B'},
+{'B', 'W', 'B', 'W', 'B', 'W', 'B', 'W'},
+{'W', 'B', 'W', 'B', 'W', 'B', 'W', 'B'}};
+// RESET ARRAYS
+char piece1[][]={{'R', 'N', 'B', 'K', 'Q', 'B', 'N', 'R'},
+{'P', 'P', 'P', 'P', 'P', 'P', 'P', 'P'},
+{'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X'},
+{'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X'},
+{'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X'},
+{'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X'},
+{'P', 'P', 'P', 'P', 'P', 'P', 'P', 'P'},
+{'R', 'N', 'B', 'K', 'Q', 'B', 'N', 'R'}};
+// RESET ARRAYS
+char sel1[][]={{'U', 'U', 'U', 'U', 'U', 'U', 'U', 'U'},
+{'U', 'U', 'U', 'U', 'U', 'U', 'U', 'U'},
+{'U', 'U', 'U', 'U', 'U', 'U', 'U', 'U'},
+{'U', 'U', 'U', 'U', 'U', 'U', 'U', 'U'},
+{'U', 'U', 'U', 'U', 'U', 'U', 'U', 'U'},
+{'U', 'U', 'U', 'U', 'U', 'U', 'U', 'U'},
+{'U', 'U', 'U', 'U', 'U', 'U', 'U', 'U'},
+{'U', 'U', 'U', 'U', 'U', 'U', 'U', 'U'}};
+
+
+
+public void init ()
+{
+p_card = new Panel ();
+p_card.setLayout (cdLayout);
+// ALL THE SCREENS
+screen1 ();
+screen2 ();
+screen3 ();
+pawn ();
+bishop ();
+rook();
+king();
+knight();
+queen();
+
+
+// RESIZING
+resize (1000, 680);
+setLayout (new BorderLayout ());
+initMenu ();
+add ("Center", p_card);
+}
+
+
+
+public void screen1 ()
+{ //screen 1 is set up.
+card1 = new Panel ();
+card1.setBackground (new Color(0, 0, 0));
+// BAsically the whole screen
+JButton title = new JButton (createImageIcon("welcome.jpg"));
+title.setPreferredSize(new Dimension (1000,680));
+title.setBackground (new Color(0, 0, 0));
+
+//Extra feature: Frame
+Frame title1 = (Frame) this.getParent().getParent(); // These change the display of the Applet.
+title1.setTitle("AVENGERS VS DC CHESS (THE BATTLE BEGINS!");
+title1.setResizable(false);
+
+/*JButton next = new JButton ("RESET");
+next.setActionCommand ("s4");
+next.addActionListener (this);
+*/
+title.setActionCommand ("s1");
+title.addActionListener (this);
+card1.add (title);
+
+p_card.add ("1", card1);
+}
+
+
+public void screen2 ()
+{ //screen 2 is set up.
+card2 = new Panel ();
+card2.setBackground (new Color(0, 0, 0));
+
+JLabel title = new JLabel ("");
+title.setIcon(createImageIcon("instructions.png"));
+//title.setPreferredSize (new Dimension (1000, 124));
+title.setBackground (new Color(0, 0, 0));
+
+Panel m=new Panel();
+m.setPreferredSize(new Dimension (1000,130));
+JButton pawn = new JButton (createImageIcon("pawn.jpg"));
+pawn.setPreferredSize(new Dimension (123,124));
+pawn.setActionCommand ("pawn");
+pawn.addActionListener (this);
+
+JButton bishop = new JButton (createImageIcon("bishop1.jpg"));
+bishop.setPreferredSize(new Dimension (124,122));
+bishop.setActionCommand ("bishop");
+bishop.addActionListener (this);
+
+JButton rook = new JButton (createImageIcon("rook.jpg"));
+rook.setPreferredSize(new Dimension (126,124));
+rook.setActionCommand ("rook");
+rook.addActionListener (this);
+
+JButton knight = new JButton (createImageIcon("kinght.jpg"));
+knight.setPreferredSize(new Dimension (131,131));
+knight.setActionCommand ("knight");
+knight.addActionListener (this);
+
+JButton king = new JButton (createImageIcon("king.jpg"));
+king.setPreferredSize(new Dimension (134,133));
+king.setActionCommand ("king");
+king.addActionListener (this);
+
+JButton queen = new JButton (createImageIcon("queen.jpg"));
+queen.setPreferredSize(new Dimension (131,131));
+queen.setActionCommand ("queen");
+queen.addActionListener (this);
+
+JButton play = new JButton (createImageIcon("play (1).jpg"));
+play.setPreferredSize(new Dimension (200,200));
+play.setActionCommand ("s2");
+play.addActionListener (this);
+
+JLabel title1 = new JLabel ("");
+
+title1.setPreferredSize (new Dimension (400,250 ));
+title1.setBackground (new Color(0, 0, 0));
+
+
+
+card2.add (title);
+card2.add (title1);
+m.add (pawn);
+m.add (bishop);
+m.add (rook);
+
+m.add (king);
+card2.add(m);
+card2.add (knight);
+
+card2.add (queen);
+card2.add (play);
+p_card.add ("2", card2);
+}
+
+// GAME SCREEN
+public void screen3 ()
+{ //screen 3 is set up.
+card3 = new Panel ();
+
+
+card3.setBackground (new Color(0, 0, 0));
+
+JLabel title = new JLabel ("C.H.E.S.S.");
+title.setIcon(createImageIcon("title.png"));
+title.setPreferredSize (new Dimension (387, 136));
+
+JLabel trn = new JLabel (".");
+trn.setIcon(createImageIcon("turn.png"));
+trn.setPreferredSize (new Dimension (152,125));
+
+
+JButton next = new JButton(createImageIcon("reset.png"));
+next.setActionCommand ("s4");
+next.addActionListener (this);
+next.setPreferredSize (new Dimension (206, 113));
+next.setBackground (new Color(0, 0, 0));
+
+//Set up grid
+Panel p = new Panel (new GridLayout (row, col));
+int move = 0;
+turnpic= new JLabel(createImageIcon("ironman.jpg"));
+turnwritten = new JLabel(createImageIcon("DC.jpg"));
+for (int i = 0 ; i < row ; i++)
+{
+// Setting up the grid
+for (int j = 0 ; j < col ; j++)
+{ //take out when you've got pictures
+// a [move] = new JButton ("");
+//add in when you have pictures
+// the pics and how will the program find them
+a [move]= new JButton (createImageIcon (piece[i][j]+""+  pieceCol [i] [j] +""+ bg[i][j]+""+sel[i][j]+ ".jpg"));
+a [move].setPreferredSize (new Dimension (64, 64));
+a[move].setBackground (Color.black);
+a [move].addActionListener (this);
+a [move].setActionCommand ("" + move);
+p.add (a [move]);
+move++;
+}
+}
+
+Panel m = new Panel(new BorderLayout());
+// nested panels
+m.add ("North",title);
+Panel n = new Panel(new BorderLayout());
+n.add ("North",trn);
+n.add("Center",turnwritten);
+n.add("South",turnpic);
+m.add("Center",n);
+m.add ("South",next);
+card3.add(m);
+card3.add (p);
+
+p_card.add ("3", card3);
+}
+
+//PAWN INSTRUCTIONS SCREEN
+public void pawn ()
+{ //screen 4 is set up.
+card4 = new Panel ();
+card4.setBackground (new Color(0, 0, 0));
+
+JButton next = new JButton (createImageIcon ("pawninst.jpg"));
+next.setPreferredSize (new Dimension (1000,700));
+next.setActionCommand ("back1");
+next.addActionListener (this);
+
+card4.add (next);
+p_card.add ("4", card4);
+}
+
+// BISHOP INSTRUCTION SCREENS
+public void bishop ()
+{ //screen 5 is set up.
+card5 = new Panel ();
+card5.setBackground (new Color(0, 0, 0));
+JButton next = new JButton (createImageIcon ("bishop.jpg"));
+next.setPreferredSize (new Dimension (1000,700));
+next.setBackground (new Color(0, 0, 0));
+next.setActionCommand ("back2");
+next.addActionListener (this);
+
+card5.add (next);
+
+p_card.add ("5", card5);
+}
+// ROOK INSTRUCTION SCREENS
+public void rook ()
+{ //screen 5 is set up.
+card6 = new Panel ();
+card6.setBackground (new Color(0, 0, 0));
+JButton next = new JButton (createImageIcon ("rookinst.jpg"));
+next.setPreferredSize (new Dimension (1000,700));
+next.setBackground (new Color(0, 0, 0));
+next.setActionCommand ("back3");
+next.addActionListener (this);
+
+card6.add (next);
+
+p_card.add ("6", card6);
+}
+
+// KING INSTRUCTION SCREEN
+public void king ()
+{ //screen 5 is set up.
+card7 = new Panel ();
+card7.setBackground (new Color(0, 0, 0));
+JButton next = new JButton (createImageIcon ("kinginst.jpg"));
+next.setPreferredSize (new Dimension (1000,700));
+next.setBackground (new Color(0, 0, 0));
+next.setActionCommand ("back4");
+next.addActionListener (this);
+
+card7.add (next);
+
+p_card.add ("7", card7);
+}
+// KNIGHT INSTRUCTION SCREEN
+public void knight ()
+{ //screen 5 is set up.
+card8 = new Panel ();
+card8.setBackground (new Color(0, 0, 0));
+JButton next = new JButton (createImageIcon ("knightinst.jpg"));
+next.setPreferredSize (new Dimension (1000,700));
+next.setBackground (new Color(0, 0, 0));
+next.setActionCommand ("back5");
+next.addActionListener (this);
+
+card8.add (next);
+
+p_card.add ("8", card8);
+}
+// QUEEN INSTRUCTION SCREEN
+public void queen ()
+{ //screen 5 is set up.
+card9 = new Panel ();
+card9.setBackground (new Color(0, 0, 0));
+JButton next = new JButton (createImageIcon ("queeninst.jpg"));
+next.setPreferredSize (new Dimension (1000,700));
+next.setBackground (new Color(0, 0, 0));
+next.setActionCommand ("back6");
+next.addActionListener (this);
+
+card9.add (next);
+
+p_card.add ("9", card9);
+}
+// METHOD FOR IMAGES
+protected static ImageIcon createImageIcon (String path)
+{ //change the red to your class name
+java.net.URL imgURL = hello.class.getResource (path);
+if (imgURL != null)
+{
+return new ImageIcon (imgURL);
+}
+else
+{
+System.err.println ("Couldn't find file: " + path);
+return null;
+}
+}
+
+//METHOD TO draw the screen again
+public void redraw ()
+{
+int move = 0;
+for (int i = 0 ; i < row ; i++)
+{
+for (int j = 0 ; j < col ; j++)
+{
+// create all the images
+a [move].setIcon (createImageIcon (piece[i][j]+""+  pieceCol [i] [j] +""+ bg[i][j]+""+sel[i][j]+ ".jpg"));
+move++;
+}
+}
+}
+
+
+public void actionPerformed (ActionEvent e)
+{ //moves between the screens
+if (e.getActionCommand ().equals ("s1"))
+cdLayout.show (p_card, "2");
+else if (e.getActionCommand ().equals ("s2"))
+cdLayout.show (p_card, "3");
+else if (e.getActionCommand ().equals ("s3"))
+cdLayout.show (p_card, "3");
+else if (e.getActionCommand ().equals ("s4"))
+reset();
+else if (e.getActionCommand ().equals ("s5"))
+cdLayout.show (p_card, "5");
+else if (e.getActionCommand ().equals ("pawn"))
+cdLayout.show (p_card, "4");
+else if (e.getActionCommand ().equals ("back1"))
+cdLayout.show (p_card, "2");
+else if (e.getActionCommand ().equals ("bishop"))
+cdLayout.show (p_card, "5");
+else if (e.getActionCommand ().equals ("back2"))
+cdLayout.show (p_card, "2");
+else if (e.getActionCommand ().equals ("rook"))
+cdLayout.show (p_card, "6");
+else if (e.getActionCommand ().equals ("back3"))
+cdLayout.show (p_card, "2");
+else if (e.getActionCommand ().equals ("king"))
+cdLayout.show (p_card, "7");
+else if (e.getActionCommand ().equals ("back4"))
+cdLayout.show (p_card, "2");
+else if (e.getActionCommand ().equals ("knight"))
+cdLayout.show (p_card, "8");
+else if (e.getActionCommand ().equals ("back5"))
+cdLayout.show (p_card, "2");
+else if (e.getActionCommand ().equals ("queen"))
+cdLayout.show (p_card, "9");
+else if (e.getActionCommand ().equals ("back6"))
+cdLayout.show (p_card, "2");
+else if (e.getActionCommand ().equals ("1"))
+cdLayout.show (p_card, "1");
+else if (e.getActionCommand ().equals ("2"))
+cdLayout.show (p_card, "2");
+if(e.getActionCommand().equals("save")){
+save("file.txt");
+} else if (e.getActionCommand().equals("open")){
+open("file.txt");
+}
+else if (e.getActionCommand ().equals ("p"))
+System.exit (0);
+else
+
+{ //code to handle the game
+int n = Integer.parseInt (e.getActionCommand());
+int x = n / col;
+int y = n % col;
+showStatus ("(" + x + ", " + y + ")");
+
+
+
+// Disable when its not the players turn
+if (turn != pieceCol[x][y] && last == -1) {
+showStatus("Its not your turn");
+}
+// Make sure that the right person moves
+// Moves for each piece
+// WHEN ITS A PIECE, it will call that method(the methods incorporate kill conditions)
+else if(last == -1 && turn == pieceCol[x][y]) {
+if(piece[x][y] == 'P') {
+selectPawn(x,y);// calls the method to select the pawn and move it
+}
+
+else if(piece[x][y] == 'R') {
+selectRook(x,y);// calls the method to select the rook and move it
+}
+else if(piece[x][y] == 'N') {
+selectKnight(x,y);//calls the method to select the knight and move it
+}
+else if(piece[x][y] == 'K') {
+selectKing(x,y);// calls the method to select the king and move it
+}
+else if(piece[x][y] == 'Q') {
+selectQueen(x,y);//calls the method to select the queen and move it
+}
+else if(piece[x][y] == 'B') {
+selectBishop(x,y);//calls the method to select the bishop and move it
+}
+last = n;
+}
+else {//click #2
+// basically the code for making the pieces move on the the board
+int lastx = last /col;
+int lasty= last % col;
+if (sel[x][y]=='S') {
+piece [x][y] = piece[lastx][lasty];
+piece[lastx][lasty]='X';
+pieceCol[x][y] = pieceCol[lastx][lasty];
+pieceCol[lastx][lasty]='X';
+flipTurn();
+}
+// clears the array
+for (int i = 0; i <row;i++) {
+for (int j = 0; j <col;j++) {
+sel[i][j]='U';
+
+}
+}
+last = -1;
+redraw();
+
+}
+check();
+
+}
+
+redraw();
+
+}
+// method for fliping turns
+public void flipTurn() {
+if(turn=='B')
+{
+// the pic to set when the change is turned
+turnpic.setIcon(createImageIcon("ironman.jpg"));
+turnwritten.setIcon(createImageIcon("avengers.jpg"));
+turn = 'W';
+}
+else {
+// the pic to set when the turn is of W
+turnpic.setIcon(createImageIcon("superman.jpg"));
+turnwritten.setIcon(createImageIcon("DC.jpg"));
+turn='B';
+}
+}
+
+// PAWN METHOD THAT INCORPORATES THE MOVEMENT OF PAWNS AND KILL CONDITIONS
+public void selectPawn (int x, int y) {
+// WHEN THE WHITE PAWN IS AT ITS STARTING POSITION, IT SELECTS THE PIECES IT CAN GO TO IF THEY ARE 'x'
+if (pieceCol[x][y] == 'W'&& x==6 && piece[x-2][y]=='X'&& piece[x-1][y]=='X') {
+sel[x-1][y] ='S';
+sel[x-2][y] ='S';
+}
+// WHEN THE BLACK PAWN IS AT ITS STARTING POSITION, IT SELECTS THE PIECES IT CAN GO TO IF THEY ARE 'x'
+if (pieceCol[x][y] == 'B'&& x==1 && piece[x+2][y]=='X'&& piece[x+1][y]=='X') {
+sel[x+1][y] ='S';
+sel[x+2][y] ='S';
+}
+
+// WHEN THE WHITE PIECE IS NOT ITS ORIGINAL POSITION IT CAN ONLY MOVE ONE UP
+if (pieceCol[x][y] == 'W' && pieceCol[x-1][y]=='X') {
+sel[x-1][y] ='S';
+}
+// WHEN THE BLACK PIECE IS NOT ITS ORIGINAL POSITION IT CAN ONLY MOVE ONE UP
+if (pieceCol[x][y] == 'B'&& pieceCol[x+1][y]=='X') {
+sel[x+1][y] ='S';
+}
+// PAWN KILL CONDITIONS
+// IF THERE IS A ENEMY PIECE DIAGONALLY, THE PAWN CAN SELECT IT AND REPLACE IT
+if (x-1>=0 && y-1>=0 &&pieceCol[x][y]=='W'&& pieceCol[x-1][y-1]=='B') {
+sel[x-1][y-1]='S';
+// TOP LEFT DIAGONALLY
+}
+//
+if (x-1>=0 && y+1<row && pieceCol[x][y]=='W'&& pieceCol[x-1][y+1]=='B') {
+sel[x-1][y+1]='S';
+// TOP RIGHT DIAGONALLY
+}
+if (x+1<row && y-1>=0 && pieceCol[x][y]=='B'&& pieceCol[x+1][y-1]=='W') {
+sel[x+1][y-1]='S';
+//DOWN LEFT DIAGONALLY
+}
+if (x+1<row && y+1<col&& pieceCol[x][y]=='B'&& pieceCol[x+1][y+1]=='W') {
+sel[x+1][y+1]='S';
+// DOWN RIGHT DIAGONALLY
+}
+
+}
+// ROOK METHOD THAT INCORPORATES THE MOVEMENT OF ROOK AND KILL CONDITIONS
+public void selectRook(int x, int y) {
+//up
+// rooks can MOVE IN DIRECTION 90 DEGREES
+int cx1 = x -1; // for THE  WHITE ROOK TO MOVE UP AND BLACK ROOK TO MOVE DOWN
+while (cx1>=0 && pieceCol[cx1][y] == 'X') {
+sel[cx1][y]='S';
+cx1--;
+
+}
+if(cx1>=0&& pieceCol[cx1][y]!= pieceCol[x][y]
+&& pieceCol[cx1][y] !='X') {
+sel[cx1][y] = 'S';
+}
+// down
+int cx2 = x + 1;
+while (cx2<row && pieceCol[cx2][y] == 'X') {// for THE  BLACK ROOK TO MOVE UP AND WHITE ROOK TO MOVE DOWN
+sel[cx2][y]='S';
+cx2++;
+}
+if(cx2 < row && pieceCol[cx2][y]!= pieceCol[x][y]
+&& pieceCol[cx2][y] !='X') {
+sel[cx2][y] = 'S';
+}
+//left
+// THE ROOK CAN MOVE ANYWHERE ON THE LEFT AND THE RIGHT SIDE UNLESS AND UNTIL THERE IS AN ENEMY PIECE
+int cy1 = y -1;
+while (cy1>=0 && pieceCol[x][cy1] == 'X') {
+sel[x][cy1]='S';
+cy1--;
+} if(cy1>=0&& pieceCol[x][cy1]!= pieceCol[x][y]
+&& pieceCol[x][cy1] !='X') {
+sel[x][cy1] = 'S';
+}
+// //right
+int cy2 = y +1;
+while (cy2<row && pieceCol[x][cy2] == 'X') {
+sel[x][cy2]='S';
+cy2++;
+}
+if(cy2<row&& pieceCol[x][cy2]!= pieceCol[x][y]
+&& pieceCol[x][cy2] !='X') {
+sel[x][cy2] = 'S';
+}
+}
+
+
+
+// BISHOP METHOD THAT INCORPORATES THE MOVEMENT OF BISHOP AND KILL CONDITIONS
+public void selectBishop(int x, int y)
+{
+int cx1 = x-1; //Move Up
+int cx2 = x+1; //Move Down
+int cy1 = y+1; //Move Right
+int cy2 = y-1; //Move Left
+//Moving UP/RIGHT w/Kill
+while(cy1 < 8 && cx1 >= 0 && piece[cx1][cy1] == 'X')
+{
+sel[cx1][cy1] = 'S';
+cx1--;
+cy1++;
+}
+if(cy1 < 8 && cx1 >= 0 && pieceCol[cx1][cy1] != pieceCol[x][y] && piece[cx1][cy1] != 'X')
+sel[cx1][cy1] = 'S';
+cx1 = x-1;
+//Moving UP/LEFT w/Kill
+while(cy2 >= 0 && cx1 >= 0 && piece[cx1][cy2] == 'X')
+{
+sel[cx1][cy2] = 'S';
+cx1--;
+cy2--;
+}
+if(cy2 >= 0 && cx1 >= 0 && pieceCol[cx1][cy2] != pieceCol[x][y] && piece[cx1][cy2] != 'X')
+sel[cx1][cy2] = 'S';
+cy1 = y+1;//Reset variables
+cy2 = y-1;
+//Moving DOWN/RIGHT w/Kill
+while(cy1 < 8 && cx2 < 8 && piece[cx2][cy1] == 'X')
+{
+sel[cx2][cy1] = 'S';
+cx2++;
+cy1++;
+}
+if(cy1 < 8 && cx2 < 8 && pieceCol[cx2][cy1] != pieceCol[x][y] && piece[cx2][cy1] != 'X')
+sel[cx2][cy1] = 'S';
+cx2 = x+1;//Reset variable
+//Moving DOWN/LEFT w/Kill
+while(cy2 >= 0 && cx2 < 8 && piece[cx2][cy2] == 'X')
+{
+sel[cx2][cy2] = 'S';
+cx2++;
+cy2--;
+}
+if(cy2 >= 0 && cx2 < 8 && pieceCol[cx2][cy2] != pieceCol[x][y] && piece[cx2][cy2] != 'X')
+sel[cx2][cy2] = 'S';
+}
+
+// QUEEN METHOD THAT INCORPORATES THE MOVEMENT OF QUEEN AND KILL CONDITIONS
+public void selectQueen (int x, int y) {
+// QUEEN CAN MOVE IN ANY DIRECTIONS (90 DEGREES OR DIAGONALLY) UNLESS AND UNTIL THERE IS AN ENEMY PIECE.
+//IT INCORPORATES  ROOK AND BISHOP
+selectRook(x,y);
+selectBishop(x,y);
+
+}
+
+// KING METHOD THAT INCORPORATES THE MOVEMENT OF KINGS AND KILL CONDITIONS
+public void selectKing (int x, int y) {
+
+// tHE KING CAN MOVE IN ANY DIRECTION BUT ONLY ONE PLACE
+//DOWN
+if(x+1<col && piece[x+1][y]=='X')
+sel[x+1][y] ='S';
+vacant++;// THE GLOBAL ITS ADDS ONTO THE PLACES WHERE THE KING CAN MOVE
+//LEFT
+if(y-1>=0 &&piece[x][y-1]=='X')
+sel[x][y-1]='S';
+vacant++;// THE GLOBAL ITS ADDS ONTO THE PLACES WHERE THE KING CAN MOVE
+
+//RIGHT
+if(y+1<col &&piece[x][y+1]=='X')
+sel[x][y+1]='S';
+vacant++;// THE GLOBAL ITS ADDS ONTO THE PLACES WHERE THE KING CAN MOVE
+
+//UP
+if(x-1>=0 && piece[x-1][y]=='X')
+sel[x-1][y] ='S';
+vacant++;// THE GLOBAL ITS ADDS ONTO THE PLACES WHERE THE KING CAN MOVE
+
+//Diagonals
+// top left
+if (x+1<col && y-1 >=0 && piece[x+1][y-1]=='X')
+sel[x+1][y-1]='S';
+vacant++;// THE GLOBAL ITS ADDS ONTO THE PLACES WHERE THE KING CAN MOVE
+
+// down right
+if (x+1<col && y+1 <col && piece[x+1][y+1]=='X')
+sel[x+1][y+1]='S';
+vacant++;// THE GLOBAL ITS ADDS ONTO THE PLACES WHERE THE KING CAN MOVE
+
+// top right
+
+if (x-1>=0 && y+1 <col && piece[x-1][y+1]=='X')
+sel[x-1][y+1]='S';
+vacant++;// THE GLOBAL ITS ADDS ONTO THE PLACES WHERE THE KING CAN MOVE
+
+//down left
+if (x-1>=0 && y-1 >=0 && piece[x-1][y-1]=='X')
+sel[x-1][y-1]='S';
+vacant++;// THE GLOBAL ITS ADDS ONTO THE PLACES WHERE THE KING CAN MOVE
+
+
+
+}
+// KNIGHT METHOD THAT INCORPORATES THE MOVEMENT OF KNIGHTS AND KILL CONDITIONS
+public void selectKnight(int x, int y ) {
+// SELECTS THE KNIGHT AND IT CAN GO IN AN DIRECT ONE AND A HALF TIMES
+
+if (x+1<col && y+2<col && (piece [x+1][y+2]=='X'||pieceCol [x+1][y+2]!= pieceCol[x][y]) ) {
+sel[x+1][y+2]='S';
+}
+if (x+2<col && y+1<col && (piece [x+2][y+1]=='X'||pieceCol [x+2][y+1]!= pieceCol[x][y])) {
+sel[x+2][y+1]='S';
+}
+if (x+2<col && y-1>=0 && (piece [x+2][y-1]=='X'||pieceCol [x+2][y-1]!= pieceCol[x][y])) {
+sel[x+2][y-1]='S';
+}
+if (x+1<col && y-2>=0 && (piece [x+1][y-2]=='X'||pieceCol [x+1][y-2]!= pieceCol[x][y])) {
+sel[x+1][y-2]='S';
+}
+if (x-1>=0 && y-2>=0 && (piece [x-1][y-2]=='X'||pieceCol [x-1][y-2]!= pieceCol[x][y])) {
+sel[x-1][y-2]='S';
+}
+if (x-2>=0 && y-1>=0 && (piece [x-2][y-1]=='X'||pieceCol [x-2][y-1]!= pieceCol[x][y])) {
+sel[x-2][y-1]='S';
+}
+if (x-2>=0 && y+1<col && (piece [x-2][y+1]=='X'||pieceCol [x-2][y+1]!= pieceCol[x][y] )) {
+sel[x-2][y+1]='S';
+}
+if (x-1>=0 && y+2<col && (piece [x-1][y+2]=='X'||pieceCol [x-1][y+2]!= pieceCol[x][y])) {
+sel[x-1][y+2]='S';
+}
+
+}
+// METHOD TO CHECK THE PAWN
+public void checkPawn(int x, int y){
+System.out.println("Pawn");
+// WHEREEVER THE PAWN CAN KILL, IT WILL SELECT THE THAT POSITION IN THE CHECK ARRAY
+if (x-1>=0 && y-1>=0 && pieceCol[x][y]!= pieceCol[x-1][y-1] ) {
+check[x-1][y-1]='S';
+}
+if (x-1>=0 && y+1<row && pieceCol[x][y]!= pieceCol[x-1][y+1]) {
+check[x-1][y+1]='S';
+
+}
+if (x+1<row && y-1>=0 && pieceCol[x][y]!= pieceCol[x+1][y-1]) {
+check[x+1][y-1]='S';
+}
+if (x+1<row && y+1<col&& pieceCol[x][y]!= pieceCol[x+1][y+1]) {
+check[x+1][y+1]='S';
+}
+}
+// METHOD TO CHECK THE BISHOP
+public void checkBishop(int x, int y) {
+// WHEREEVER THE BISHOP CAN KILL, IT WILL SELECT THE THAT POSITION IN THE CHECK ARRAY
+System.out.println("Bishop");
+int cy1 = y +1;
+int cx1 = x +1;
+while (cy1<row &&cx1<row&& pieceCol[cx1][cy1] == 'X')
+{
+check[cx1][cy1]='S';
+cy1++;
+cx1++;
+}
+if(cy1<row &&cx1<row && pieceCol[cx1][cy1] != pieceCol[x][y] && pieceCol[cx1][cy1] !='X')
+check[cx1][cy1] = 'S';
+// downleft
+int cy2 = y -1;
+int cx2 = x +1;
+while (cy2>=0 &&cx2<row&& pieceCol[cx2][cy2] == 'X')
+{
+check[cx2][cy2]='S';
+cy2--;
+cx2++;
+}
+if(cy2>=0 && cx2 < row && pieceCol[cx2][cy2] != pieceCol[x][y] && pieceCol[cx2][cy2] !='X')
+check[cx2][cy2] = 'S';
+
+// up right
+int cy3 = y +1;
+int cx3 = x -1;
+while (cy3<row &&cx3>=0&& pieceCol[cx3][cy3] =='X')
+{
+check[cx3][cy3]='S';
+cy3++;
+cx3--;
+}
+if(cy3<row &&cx3>=0 && pieceCol[cx3][cy3] != pieceCol[x][y] && pieceCol[cx3][cy3] !='X')
+check[cx3][cy3] = 'S';
+
+// up left
+int cy4 = y -1;
+int cx4 = x -1;
+while (cy4>=0 &&cx4>=0 && pieceCol[cx4][cy4] == 'X')
+{
+check[cx4][cy4]='S';
+cy4--;
+cx4--;
+}
+if(cy4>=0 &&cx4>=0&& pieceCol[cx4][cy4] != pieceCol[x][y] && pieceCol[cx4][cy4] !='X')
+check[cx4][cy4] = 'S';
+}
+// METHOD TO CHECK THE QUEEN
+public void checkQueen(int x, int y) {
+// WHEREEVER THE QUEEN CAN KILL, IT WILL SELECT THE THAT POSITION IN THE CHECK ARRAY
+System.out.println("Queen");
+checkRook(x,y);
+checkBishop(x,y);
+
+}
+// METHOD TO CHECK THE KNIGHT
+public void checkKnight(int x, int y) {
+// WHEREEVER THE KNIGHT CAN KILL, IT WILL SELECT THE THAT POSITION IN THE CHECK ARRAY
+System.out.println("Knight");
+if (x+1<col && y+2<col && (piece [x+1][y+2]=='X'||pieceCol [x+1][y+2]!= pieceCol[x][y]) ) {
+check[x+1][y+2]='S';
+}
+if (x+2<col && y+1<col && (piece [x+2][y+1]=='X'||pieceCol [x+2][y+1]!= pieceCol[x][y])) {
+check[x+2][y+1]='S';
+}
+if (x+2<col && y-1>=0 && (piece [x+2][y-1]=='X'||pieceCol [x+2][y-1]!= pieceCol[x][y])) {
+check[x+2][y-1]='S';
+}
+if (x+1<col && y-2>=0 && (piece [x+1][y-2]=='X'||pieceCol [x+1][y-2]!= pieceCol[x][y])) {
+check[x+1][y-2]='S';
+}
+if (x-1>=0 && y-2>=0 && (piece [x-1][y-2]=='X'||pieceCol [x-1][y-2]!= pieceCol[x][y])) {
+check[x-1][y-2]='S';
+}
+if (x-2>=0 && y-1>=0 && (piece [x-2][y-1]=='X'||pieceCol [x-2][y-1]!= pieceCol[x][y])) {
+check[x-2][y-1]='S';
+}
+if (x-2>=0 && y+1<col && (piece [x-2][y+1]=='X'||pieceCol [x-2][y+1]!= pieceCol[x][y] )) {
+check[x-2][y+1]='S';
+}
+if (x-1>=0 && y+2<col && (piece [x-1][y+2]=='X'||pieceCol [x-1][y+2]!= pieceCol[x][y])) {
+check[x-1][y+2]='S';
+}
+}
+// METHOD TO CHECK THE ROOK
+public void checkRook (int x, int y)
+{
+// WHEREEVER THE ROOK CAN KILL, IT WILL SELECT THE THAT POSITION IN THE CHECK ARRAY
+System.out.println("Rook");
+//up
+int cx1 = x -1;
+while (cx1>=0 && pieceCol[cx1][y] == 'X') {
+check[cx1][y]='S';
+cx1--;
+}
+if(cx1>=0 && pieceCol[cx1][y]!= pieceCol[x][y]
+&& pieceCol[cx1][y] !='X') {
+check[cx1][y] = 'S';
+}
+// down
+int cx2 = x + 1;
+while (cx2<row && pieceCol[cx2][y] == 'X') {
+check[cx2][y] = 'S';
+cx2++;
+}
+if(cx2 < row && pieceCol[cx2][y]!= pieceCol[x][y]
+&& pieceCol[cx2][y] !='X') {
+check[cx2][y] = 'S';
+}
+//left
+int cy1 = y -1;
+while (cy1>=0 && pieceCol[x][cy1] == 'X') {
+check[x][cy1] = 'S';
+cy1--;
+} if(cy1>=0&& pieceCol[x][cy1]!= pieceCol[x][y]
+&& pieceCol[x][cy1] !='X') {
+check[x][cy1] = 'S';
+}
+// //right
+int cy2 = y +1;
+while (cy2<row && pieceCol[x][cy2] == 'X') {
+check[x][cy2] = 'S';
+cy2++;
+}
+if(cy2<row&& pieceCol[x][cy2]!= pieceCol[x][y]
+&& pieceCol[x][cy2] !='X') {
+check[x][cy2] = 'S';
+}
+}
+// METHOD TO CHECK THE PAWN
+public void checkKing(int x, int y) {
+// WHEREEVER THE PAWN CAN KILL, IT WILL SELECT THE THAT POSITION IN THE CHECK ARRAY
+System.out.println("king");
+if(x+1<col && pieceCol[x+1][y]=='X')
+check[x+1][y] ='S';
+if(y-1>=0 &&pieceCol[x][y-1]=='X')
+check[x][y-1]='S';
+if(y+1<col &&pieceCol[x][y+1]=='X')
+check[x][y+1]='S';
+if(x-1>=0 && pieceCol[x-1][y]=='X')
+check[x-1][y] ='S';
+//Diagonals
+// top left
+if (x+1<col && y-1 >=0 && pieceCol[x+1][y-1]=='X')
+check[x+1][y-1]='S';
+// down right
+if (x+1<col && y+1 <col && pieceCol[x+1][y+1]=='X')
+check[x+1][y+1]='S';
+// top right
+
+if (x-1>=0 && y+1 <col && pieceCol[x-1][y+1]=='X')
+check[x-1][y+1]='S';
+
+//down left
+if (x-1>=0 && y-1 >=0 && pieceCol[x-1][y-1]=='X')
+check[x-1][y-1]='S';
+}
+// MAIN METHOD FOR CHECK AND CHECKMATE
+public void check() {
+// LOOP TO FIND THE POSITION OF KING IN THE MAIN ARRAY AND SAVING IT IN THE GLOBAL VARIABLES
+for (int i = 0; i < row; i++) {
+for (int j = 0; j<row; j++) {
+if (piece [i][j] == 'K' && pieceCol[i][j]==turn) {
+kpx = i;
+kpy = j;
+}
+
+}
+}
+// IF ITS THE ENEMY TURN, IT WILL CHECK WHICH PIECE IT IS AND INCORPORATE ITS CHECK METHOD AND INCREASE THE KING CHECK GLOBAL, BASICALLY IT INCORPORATES THE PLACES WHICH ARE LEFT FOR THE KING TO GO
+for (int i = 0; i < row; i++) {
+for (int j = 0; j<row; j++) {
+if (turn!= pieceCol[i][j]) {
+if (piece [i][j] == 'P' ) {
+checkPawn(i,j);
+kingcheck++;
+
+}
+if (piece [i][j] == 'B'  ) {
+checkBishop(i,j);
+kingcheck++;
+
+}
+if (piece [i][j] == 'Q'  ) {
+checkQueen(i,j);
+kingcheck++;
+
+}
+if (piece [i][j] == 'N'  ) {
+checkKnight(i,j);
+kingcheck++;
+
+}
+if (piece [i][j] == 'K'  ) {
+checkKing(i,j);
+kingcheck++;
+
+}
+
+if (piece [i][j] == 'R'  ) {
+checkRook(i,j);
+kingcheck++;
+
+}
+}}
+}
+
+// IF THE VACT GLOBAL IS EQUAL TO KING CHECK AND IN THE CHECK ARRAY, THE KING POSITIONS ARE SELECTED  AND ITS ENEMY'S TURN, THEN ITS CHECK MATE
+for(int i = 0; i <row; i++) {
+for (int j = 0; j<row; j++) {
+if(vacant == kingcheck && check[kpx][kpy]=='S'&& pieceCol[i][j]=='W') {
+JOptionPane.showMessageDialog(null, " The Avengers are in checkmate !\n"+"The DC won the battle\n"+"Click OK to restart the battle", "Checkmate", JOptionPane.INFORMATION_MESSAGE);
+reset();
+}
+else if (vacant == kingcheck && check[kpx][kpy]=='S'&& pieceCol[i][j]=='B') {
+JOptionPane.showMessageDialog(null, " The DC are in checkmate !\n"+"The Avengers won the battle\n"+"Click OK to restart the battle", "Checkmate", JOptionPane.INFORMATION_MESSAGE);
+reset();
+}
+// IF THE CHECK ARRAY IS SELECTED AND ITS THE SAME AS THE GLOBALS, KPX AND KPY
+else if (check[i][j]=='S' && i == kpx && j == kpy) {
+JOptionPane.showMessageDialog (null, createImageIcon ("check.jpg"), "Check", JOptionPane.INFORMATION_MESSAGE);//Dialog Box for starting //extra feature
+
+}
+}
+}
+// CLEARS THE ARRAY
+for(int i = 0; i <row; i++) {
+for (int j = 0; j<row; j++) {
+check[i][j] = 'U';
+
+}
+
+}
+
+}
+// RESET ARRAY
+public void reset() {
+{ //copy every element of r into b
+//that sets it back to the original
+for (int i = 0 ; i < row ; i++)
+for (int j = 0 ; j < col ; j++) {
+pieceCol[i][j]=pieceCol1[i][j];
+piece[i][j]=piece1[i][j];
+sel[i][j]=sel1[i][j];
+bg[i][j]=bg[i][j];
+}
+//call redraw to update b on the screen
+redraw ();
+
+}
+
+}
+// EXTRA FEATURE, CREATES THE MENU
+public void initMenu ()
+{
+JMenuBar menuBar = new JMenuBar ();
+JMenu menu;
+JMenuItem menuItem;
+//MAIN MENU
+menu = new JMenu ("File");
+menuBar.add (menu);
+
+//MENU ITEMS
+menuItem = new JMenuItem ("Opening");
+menuItem.addActionListener (this);
+menuItem.setActionCommand ("1");
+menu.add (menuItem);
+
+menuItem = new JMenuItem ("Rules");
+menuItem.addActionListener (this);
+menuItem.setActionCommand ("2");
+menu.add (menuItem);
+
+menuItem = new JMenuItem ("Save");
+
+menuItem.addActionListener(this);
+menuItem.setActionCommand("save");
+
+menu.add (menuItem);
+menuItem = new JMenuItem ("Open");
+menuItem.addActionListener(this);
+menuItem.setActionCommand("open");
+
+menu.add (menuItem);
+
+
+
+
+add ("North", menuBar);
+}
+// METHOD TO SAVE THE CODE
+void save (String filename) {
+PrintWriter out;
+try {
+out = new PrintWriter (new FileWriter (filename));
+for(int i=0; i<piece.length; i++)
+out.println (""+piece[i]);
+for(int i=0; i<piece.length; i++)
+out.println (""+piece[i]);
+out.close ();
+}
+catch (IOException e) {
+System.out.println ("Error opening file " + e);
+}
+}
+// METHOD FOR OPENING
+/*public void open(String filename){
+BufferedReader in;
+try {
+in = new BufferedReader (new FileReader (filename));
+String input = in.readLine ();
+for(int i=0; i<piece.length; i++) {
+piece[i]= Integer.parseInt (input);
+input = in.readLine ();
+}
+for(int i=0; i<visible.length; i++) {
+visible[i]= input;
+input = in.readLine ();
+}
+in.close ();
+}
+catch (IOException e) {
+System.out.println ("Error opening file " + e);
+}
+redraw();
+}
+*/
+
+
+}
